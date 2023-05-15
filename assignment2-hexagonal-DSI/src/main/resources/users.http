@@ -1,0 +1,116 @@
+
+###
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "jalcobe@tecnocampus.cat",
+  "password": "password123"
+}
+
+> {%
+    client.global.set("auth_token", response.headers.valueOf("Authorization"));
+    client.log("token: " + response.headers.valueOf("Authorization"));
+    client.log("header: " + response.headers)
+    client.log("hello " + client.global.get("auth_token"));
+    client.assert(response.status === 200, "Response status is not 200");
+%}
+
+###
+GET http://localhost:8080/api/me
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYWxjb2JlQHRlY25vY2FtcHVzLmNhdCIsImF1dGhvcml0aWVzIjpbeyJhdXRob3JpdHkiOiJST0xFX1BST0ZFU1NJT05BTCJ9XSwiaWF0IjoxNjc3NTIxNDg0LCJleHAiOjE2NzgzMTY0MDB9.S1Q4v2sLWttuRFNc0pOmygGxrqdgJeho4Z_2AtPpBdXLGXuu1bEBzMddsM15sp3rfoiliVMVNwmOdR3FNeFStg
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Testing body", function() {
+        const name = response.body.name;
+        const mybody = response.body;
+        client.log("name json: " + mybody.name);
+        client.log("name: " + name);
+        client.assert(name === 'Maria', "no Maria found");
+        client.assert(response.body.hasOwnProperty("name"), "Cannot find 'name' option in response");
+    });
+
+    client.test("Response content-type is json", function() {
+        var type = response.contentType.mimeType;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+    });
+%}
+
+
+###
+GET http://localhost:8080/api/me/likedTracks
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYWxjb2JlQHRlY25vY2FtcHVzLmNhdCIsImF1dGhvcml0aWVzIjpbeyJhdXRob3JpdHkiOiJST0xFX1BST0ZFU1NJT05BTCJ9XSwiaWF0IjoxNjc3NTIyMzExLCJleHAiOjE2NzgzMTY0MDB9.JhJkzCpSQVi8aUyNMHpUn9vGBniW3FT8PYRpZBerotrZiDb8U2-XPzdD4-braAXoC1JUDvLIXY1g_Xx1FLYVUg
+#Authorization: {{auth_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+###
+PUT http://localhost:8080/api/me/likedTracks/3
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtcGVyZXpAdGVjbm9jYW1wdXMuY2F0IiwiYXV0aG9yaXRpZXMiOlt7ImF1dGhvcml0eSI6IlJPTEVfRlJFRSJ9XSwiaWF0IjoxNjcxMDE5MDU2LCJleHAiOjE2NzE4MzY0MDB9.HQ9oFH0msAOaeqWHxVpKPnklos9W0SMCQ2VZtQsack2bP5fZirxokg-1f8kiloksrVoN0mdOf-WNOzxIxzgwow
+#Authorization: {{auth_token}}
+
+###
+GET http://localhost:8080/api/me/trackEntities
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYWxjb2JlQHRlY25vY2FtcHVzLmNhdCIsImF1dGhvcml0aWVzIjpbeyJhdXRob3JpdHkiOiJST0xFX1BST0ZFU1NJT05BTCJ9XSwiaWF0IjoxNjc3NTE3OTgxLCJleHAiOjE2NzgzMTY0MDB9.Npu-MgGWr0Ktjy7yJw20_clDYl-ZV1zdcuSgY7-_sSH5VaG8sj6YdQD5PD76HDJ4mTaSE12fwZ6jqrWhs0j6-A
+#Authorization: {{auth_token}}
+
+###
+GET http://localhost:8080/api/me/playLists
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYWxjb2JlQHRlY25vY2FtcHVzLmNhdCIsImF1dGhvcml0aWVzIjpbeyJhdXRob3JpdHkiOiJST0xFX1BST0ZFU1NJT05BTCJ9XSwiaWF0IjoxNjc3NTE4MzA5LCJleHAiOjE2NzgzMTY0MDB9.22UM9r0XojsW8qAimNG_5QC-uw2q7etMlQGPWGEEtPvGRqelIm_Nzrj-oBCrG0OyTivIAatygDKuKBjxwSEDOw
+###
+POST http://localhost:8080/api/me/playLists
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYWxjb2JlQHRlY25vY2FtcHVzLmNhdCIsImF1dGhvcml0aWVzIjpbeyJhdXRob3JpdHkiOiJST0xFX1BST0ZFU1NJT05BTCJ9XSwiaWF0IjoxNjc3NTE4MzA5LCJleHAiOjE2NzgzMTY0MDB9.22UM9r0XojsW8qAimNG_5QC-uw2q7etMlQGPWGEEtPvGRqelIm_Nzrj-oBCrG0OyTivIAatygDKuKBjxwSEDOw
+#Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My own",
+  "description": "My own preferences",
+  "open": true,
+  "trackEntities": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+###
+###
+PUT http://localhost:8080/api/playLists/1/trackEntities
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtcGVyZXpAdGVjbm9jYW1wdXMuY2F0IiwiYXV0aG9yaXRpZXMiOlt7ImF1dGhvcml0eSI6IlJPTEVfRlJFRSJ9XSwiaWF0IjoxNjcxMDE5MDU2LCJleHAiOjE2NzE4MzY0MDB9.HQ9oFH0msAOaeqWHxVpKPnklos9W0SMCQ2VZtQsack2bP5fZirxokg-1f8kiloksrVoN0mdOf-WNOzxIxzgwow
+#Authorization: {{auth_token}}
+Content-Type: application/json
+
+[3]
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+###
+GET http://localhost:8080/api/me/playLists
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtcGVyZXpAdGVjbm9jYW1wdXMuY2F0IiwiYXV0aG9yaXRpZXMiOlt7ImF1dGhvcml0eSI6IlJPTEVfRlJFRSJ9XSwiaWF0IjoxNjcxMDE5MDU2LCJleHAiOjE2NzE4MzY0MDB9.HQ9oFH0msAOaeqWHxVpKPnklos9W0SMCQ2VZtQsack2bP5fZirxokg-1f8kiloksrVoN0mdOf-WNOzxIxzgwow
+#Authorization: {{auth_token}}
+
+> {%
+    client.test("Added song succesfully", function() {
+        client.assert(response.body[0].trackEntities.length === 3, "Not 3 songs");
+    });
+%}
+
+### list users
+GET http://localhost:8080/api/users
+Authorization: {{auth_token}}
